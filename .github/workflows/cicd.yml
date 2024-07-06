@@ -25,178 +25,180 @@ jobs:
       - name: Docker Version
         run: docker version
 
-      # - name: Build Docker Images
-      #   run: docker-compose build
-
-      # - name: Create & Start Docker Containers
-      #   run: docker-compose up -d
-
-      # - name: OS Version
-      #   run: |
-      #     docker-compose exec -T app cat /etc/os-release
-      #     docker-compose exec -T app cat /etc/debian_version
-
-      # - name: PHP Version
-      #   run: docker-compose exec -T app php --version
-
-      # - name: Composer Version
-      #   run: docker-compose exec -T app composer --version
-
-      # - name: Install Dependencies
-      #   run: docker-compose exec -T app composer install
-
-      # - name: Laravel Version
-      #   run: docker-compose exec -T app php artisan --version
-
-      # - name: Laravel Setting
-      #   run: |
-      #     docker-compose exec -T app cp .env.example .env
-      #     docker-compose exec -T app php artisan key:generate
-
-      # - name: Laravel Migrate Testing
-      #   run: docker-compose exec -T app php artisan migrate
-
-      # - name: Laravel Rollback Testing
-      #   run: docker-compose exec -T app php artisan migrate:refresh
-
-      # - name: Laravel Seeding Testing
-      #   run: docker-compose exec -T app php artisan db:seed
-
-      # - name: Laravel PHPUnit Testing
-      #   run: docker-compose exec -T app php artisan test
-
-  deploy:
-    # TODO: 検証終えたらコメントアウト外す
-    # if: github.ref == 'refs/heads/main'
-    needs: ci
-    runs-on: ubuntu-latest
-
-    # GitHubのOIDCプロバイダが発行されるトークンを利用するために必要となる
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      # コードチェックアウト
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # AWS認証
-      - name: Configure aws credentials for pord
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          # aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          # aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-1
-          role-to-assume: "arn:aws:iam::502674413540:role/github-actions-ecr-push-jobpair-role-and-register-task-def"
-          role-duration-seconds: 1800
-
-      # github actionsで使用される環境変数を追加
-      # - name: Set env vars for prod
-      #   run: echo "ENV_NAME=prod" >> $GITHUB_ENV
+      - name: Build Docker Images
+        run: docker-compose build
 
       - name: Create & Start Docker Containers
-        run: docker-compose up -d --build app web
+        run: docker-compose up -d
 
-      - name: Cache composer
-        id: cache-composer
-        uses: actions/cache@v2
-        with:
-          path: src/vendor
-          key: composer-v1-${{ hashFiles('src/composer.lock') }}
-
-      - run: docker-compose exec -T app composer install -n --prefer-dist --no-dev
-        # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
-        if: ${{ !steps.cache-composer.outputs.cache-hit }}
-
-      - name: Log in to Amazon ECR
-        id: amazon-ecr-login
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Push nginx image to ecr
-        id: build-nginx-image
-        env:
-          DOCKER_BUILDKIT: 1
-          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
-          ECR_REPOSITORY: jobpair-prod-nginx
-          IMAGE_TAG: ${{ github.sha }}
+      - name: OS Version
         run: |
-          docker build \
-            --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
-          -f infra/nginx/Dockerfile \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "nginx-image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          docker-compose exec -T app cat /etc/os-release
+          docker-compose exec -T app cat /etc/debian_version
 
-      - name: Push php image to ecr
-        id: build-php-image
-        env:
-          DOCKER_BUILDKIT: 1
-          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
-          ECR_REPOSITORY: jobpair-prod-php
-          IMAGE_TAG: ${{ github.sha }}
+      - name: PHP Version
+        run: docker-compose exec -T app php --version
+
+      - name: Composer Version
+        run: docker-compose exec -T app composer --version
+
+      - name: Install Dependencies
+        run: docker-compose exec -T app composer install
+
+      - name: Laravel Version
+        run: docker-compose exec -T app php artisan --version
+
+      - name: Laravel Setting
         run: |
-          docker build \
-            --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
-            -f infra/php/Dockerfile \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "php-image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          docker-compose exec -T app cp .env.example .env
+          docker-compose exec -T app php artisan key:generate
 
-      - name: Fill in the new nginx image ID in the Amazon ECS task definition
-        id: nginx-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: nginx
-          image: ${{ steps.build-nginx-image.outputs.nginx-image }}
+      - name: Laravel Migrate Testing
+        run: docker-compose exec -T app php artisan migrate
 
-      - name: Fill in the new php image ID in the Amazon ECS task definition
-        id: php-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: php
-          image: ${{ steps.build-php-image.outputs.php-image }}
+      - name: Laravel Rollback Testing
+        run: docker-compose exec -T app php artisan migrate:refresh
 
-      - name: Deploy Amazon ECS nginx task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Laravel Seeding Testing
+        run: docker-compose exec -T app php artisan db:seed
 
-      - name: Deploy Amazon ECS php task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Laravel PHPUnit Testing
+        run: docker-compose exec -T app php artisan test
 
-      # - name: Build, tag, and push Docker image
-      #   env:
-      #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-      #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #   run: |
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      # 一時的にコメントアウト
+  # deploy:
+  #   # TODO: 検証終えたらコメントアウト外す
+  #   # if: github.ref == 'refs/heads/main'
+  #   needs: ci
+  #   runs-on: ubuntu-latest
 
-      # - name: Deploy to Fargate
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: ${{ secrets.AWS_REGION }}
-      #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-      #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #   run: |
-      #     aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment \
-      #     --region $AWS_REGION
+  #   # GitHubのOIDCプロバイダが発行されるトークンを利用するために必要となる
+  #   # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+
+  #   steps:
+  #     # コードチェックアウト
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     # AWS認証
+  #     - name: Configure aws credentials for pord
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         # aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+  #         # aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ap-northeast-1
+  #         role-to-assume: "arn:aws:iam::502674413540:role/github-actions-ecr-push-jobpair-role-and-register-task-def"
+  #         role-duration-seconds: 1800
+
+  #     # github actionsで使用される環境変数を追加
+  #     # - name: Set env vars for prod
+  #     #   run: echo "ENV_NAME=prod" >> $GITHUB_ENV
+
+  #     - name: Create & Start Docker Containers
+  #       run: docker-compose up -d --build app web
+
+  #     - name: Cache composer
+  #       id: cache-composer
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: src/vendor
+  #         key: composer-v1-${{ hashFiles('src/composer.lock') }}
+
+  #     - run: docker-compose exec -T app composer install -n --prefer-dist --no-dev
+  #       # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
+  #       if: ${{ !steps.cache-composer.outputs.cache-hit }}
+
+  #     - name: Log in to Amazon ECR
+  #       id: amazon-ecr-login
+  #       uses: aws-actions/amazon-ecr-login@v1
+
+  #     - name: Push nginx image to ecr
+  #       id: build-nginx-image
+  #       env:
+  #         DOCKER_BUILDKIT: 1
+  #         ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+  #         ECR_REPOSITORY: jobpair-prod-nginx
+  #         IMAGE_TAG: ${{ github.sha }}
+  #       run: |
+  #         docker build \
+  #           --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+  #         -f infra/nginx/Dockerfile \
+  #           -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+  #           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+  #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  #         echo "nginx-image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  #     - name: Push php image to ecr
+  #       id: build-php-image
+  #       env:
+  #         DOCKER_BUILDKIT: 1
+  #         ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+  #         ECR_REPOSITORY: jobpair-prod-php
+  #         IMAGE_TAG: ${{ github.sha }}
+  #       run: |
+  #         docker build \
+  #           --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+  #           -f infra/php/Dockerfile \
+  #           -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+  #           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+  #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  #         echo "php-image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  #     - name: Fill in the new nginx image ID in the Amazon ECS task definition
+  #       id: nginx-task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
+  #         container-name: nginx
+  #         image: ${{ steps.build-nginx-image.outputs.nginx-image }}
+
+  #     - name: Fill in the new php image ID in the Amazon ECS task definition
+  #       id: php-task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
+  #         container-name: php
+  #         image: ${{ steps.build-php-image.outputs.php-image }}
+
+  #     - name: Deploy Amazon ECS nginx task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+  #       with:
+  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
+  #         service: ${{ env.ECS_SERVICE }}
+  #         cluster: ${{ env.ECS_CLUSTER }}
+  #         wait-for-service-stability: true
+
+  #     - name: Deploy Amazon ECS php task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+  #       with:
+  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
+  #         service: ${{ env.ECS_SERVICE }}
+  #         cluster: ${{ env.ECS_CLUSTER }}
+  #         wait-for-service-stability: true
+
+  # 以下は参考コード。実際は稼働させない
+  # - name: Build, tag, and push Docker image
+  #   env:
+  #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  #     IMAGE_TAG: ${{ github.sha }}
+  #   run: |
+  #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+  #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  # - name: Deploy to Fargate
+  #   env:
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #     AWS_REGION: ${{ secrets.AWS_REGION }}
+  #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  #     IMAGE_TAG: ${{ github.sha }}
+  #   run: |
+  #     aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment \
+  #     --region $AWS_REGION
