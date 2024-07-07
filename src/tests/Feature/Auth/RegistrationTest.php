@@ -28,7 +28,9 @@ final class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
+        $user = \App\Models\User::where('email', 'test@example.com')->first();
+
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $response->assertRedirect(route('user.user.edit', ['user' => $user->id]));
     }
 }

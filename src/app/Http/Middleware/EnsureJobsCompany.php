@@ -19,6 +19,8 @@ final class EnsureJobsCompany
      */
     public function handle(Request $request, Closure $next)
     {
+        if (!($request->route() instanceof \Illuminate\Routing\Route)) return $next($request);
+
         $id = $request->route()->parameter('job'); //jobのid取得
         if (!is_null($id)) {
             $jobCompanyId = Jobs::findOrFail($id)->companies->id;

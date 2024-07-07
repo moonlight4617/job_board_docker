@@ -19,14 +19,14 @@ final class EnsureUser
      */
     public function handle(Request $request, Closure $next)
     {
-        $id = $request->route()->parameter('user');
-        if (!is_null($id)) {
-            $userId = User::findOrFail($id)->id;
-            if ($userId !== Auth::id()) {
-                abort(404); // 404画面表示 }
-            }
+        if (!($request->route() instanceof \Illuminate\Routing\Route)) return $next($request);
 
-            return $next($request);
+        $id = $request->route()->parameter('user');
+        if (is_null($id)) return $next($request);
+
+        $userId = User::findOrFail($id)->id;
+        if ($userId !== Auth::id()) {
+            abort(404); // 404画面表示 }
         }
 
         return $next($request);

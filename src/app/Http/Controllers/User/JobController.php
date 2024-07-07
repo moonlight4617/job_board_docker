@@ -46,7 +46,7 @@ final class JobController extends Controller
         $company = $job->companies;
         // まだAppStatusesテーブルにデータなければ
         $app = AppStatus::where('jobs_id', $id)->where('users_id', Auth::id())->first();
-        if (! $app) {
+        if (!$app) {
             // dd($user, $company, $job, $id);
             $app = new AppStatus();
             $app->users_id = Auth::id();
@@ -62,7 +62,7 @@ final class JobController extends Controller
             // Mail::to($company->email)->send(new AppliedMail($job, route('company.jobs.show', ['job' => $id])));
         } else {
             // 既に応募済み
-            if ($app->app_flag === 1) {
+            if ($app->app_flag == 1) {  // 後の改修ポイントそもそもtrue, falseで代入、比較を行えないか
                 return back()->with(['message' => '既に応募済みです', 'status' => 'info']);
             } else {
                 $app->app_flag = 1;
@@ -86,7 +86,7 @@ final class JobController extends Controller
         // 既にappStatusesテーブルにデータあれば
         if ($exist) {
             // まだお気に入りしてなければ
-            if (! $already_favorite) {
+            if (!$already_favorite) {
                 $exist->favorite = true;
                 $exist->save();
                 // 既にお気に入りしてれば
@@ -102,7 +102,6 @@ final class JobController extends Controller
             $favorite->favorite = true;
             $favorite->save();
         }
-
     }
 
     public function query(Request $request)

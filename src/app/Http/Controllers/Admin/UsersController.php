@@ -93,8 +93,8 @@ final class UsersController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore = $fileName . '.'  . $extension;
-            $resizedImage = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/users/' . $fileNameToStore, $resizedImage);
+            $resizedImage = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/users/' . $fileNameToStore, (string)$resizedImage);
             $user->pro_image = $fileNameToStore;
         } else {
             $fileNameToStore1 = null;
@@ -107,8 +107,8 @@ final class UsersController extends Controller
             $portfolioName = uniqid(rand() . '_');
             $extension = $imagePortfolio->extension();
             $portfolioToStore = $portfolioName . '.'  . $extension;
-            $resizedPortfolio = InterventionImage::make($imagePortfolio)->orientate()->fit(200, 200)->encode();
-            Storage::put('public/users/portfolio/' . $portfolioToStore, $resizedPortfolio);
+            $resizedPortfolio = InterventionImage::make($imagePortfolio)->orientate()->fit(200, 200)->encode($extension);
+            Storage::put('public/users/portfolio/' . $portfolioToStore, (string)$resizedPortfolio);
 
             // 新たにUserPicturesに画像登録
             UserPictures::create(['users_id' => $user->id, 'filename' => $portfolioToStore]);
@@ -187,8 +187,8 @@ final class UsersController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore = $fileName . '.'  . $extension;
-            $resizedImage = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/users/' . $fileNameToStore, $resizedImage);
+            $resizedImage = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/users/' . $fileNameToStore, (string)$resizedImage);
             $user->pro_image = $fileNameToStore;
         }
 
@@ -221,8 +221,8 @@ final class UsersController extends Controller
                 $userPicName = uniqid(rand() . '_');
                 $extension = $userPic->extension();
                 $userPicNameToStore = $userPicName . '.'  . $extension;
-                $resizedUserPic = InterventionImage::make($userPic)->orientate()->fit(200, 200)->encode();
-                Storage::put('public/users/portfolio/' . $userPicNameToStore, $resizedUserPic);
+                $resizedUserPic = InterventionImage::make($userPic)->orientate()->fit(200, 200)->encode($extension);
+                Storage::put('public/users/portfolio/' . $userPicNameToStore, (string)$resizedUserPic);
 
                 // UserPicturesに画像登録
                 UserPictures::create(['users_id' => $id, 'filename' => $userPicNameToStore]);
