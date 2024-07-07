@@ -78,8 +78,11 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore1 = $fileName . '.'  . $extension;
-            $resizedImage1 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore1, $resizedImage1);
+            // TODO:後ほど確認
+            // $resizedImage1 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
+            $resizedImage1 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            // Storage::put('public/companies/' . $fileNameToStore1, $resizedImage1);
+            Storage::put('public/companies/' . $fileNameToStore1, (string)$resizedImage1);
         } else {
             $fileNameToStore1 = null;
         }
@@ -88,8 +91,8 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore2 = $fileName . '.'  . $extension;
-            $resizedImage2 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore2, $resizedImage2);
+            $resizedImage2 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/companies/' . $fileNameToStore2, (string)$resizedImage2);
         } else {
             $fileNameToStore2 = null;
         }
@@ -98,8 +101,8 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore3 = $fileName . '.'  . $extension;
-            $resizedImage3 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore3, $resizedImage3);
+            $resizedImage3 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/companies/' . $fileNameToStore3, (string)$resizedImage3);
         } else {
             $fileNameToStore3 = null;
         }
@@ -184,8 +187,8 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore1 = $fileName . '.'  . $extension;
-            $resizedImage1 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore1, $resizedImage1);
+            $resizedImage1 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/companies/' . $fileNameToStore1, (string)$resizedImage1);
             $company->image1 = $fileNameToStore1;
         }
         if ($request->imgpath2) {
@@ -199,8 +202,8 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore2 = $fileName . '.'  . $extension;
-            $resizedImage2 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore2, $resizedImage2);
+            $resizedImage2 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/companies/' . $fileNameToStore2, (string)$resizedImage2);
             $company->image2 = $fileNameToStore2;
         }
         if ($request->imgpath3) {
@@ -214,8 +217,8 @@ final class CompaniesController extends Controller
             $fileName = uniqid(rand() . '_');
             $extension = $imageFile->extension();
             $fileNameToStore3 = $fileName . '.'  . $extension;
-            $resizedImage3 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode();
-            Storage::put('public/companies/' . $fileNameToStore3, $resizedImage3);
+            $resizedImage3 = InterventionImage::make($imageFile)->orientate()->fit(1920, 1080)->encode($extension);
+            Storage::put('public/companies/' . $fileNameToStore3, (string)$resizedImage3);
             $company->image3 = $fileNameToStore3;
         }
 

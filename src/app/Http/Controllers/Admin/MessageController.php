@@ -52,17 +52,21 @@ final class MessageController extends Controller
         return view('admin.message.show', compact(['contactUsersId', 'messages', 'company', 'user']));
     }
 
-    public function delete(Request $request)
+    public function delete($id, Request $request)
     {
-        // $test = User::where('id', 90)->count();
-        // dd($test);
-        // dd($request);
+        $user = User::findOrFail($id);
+        $company = Companies::findOrFail($request->company);
+
+        $contactUsersId = ContactUsers::where('users_id', $id)->where('companies_id', $company->id)->select('id')->get();
+        if ($contactUsersId->first() == null) {
+            return back()->with(['message' => 'まだチャットルームがありません', 'status' => 'alert']);
+        }
+
         foreach ($request->messages as $messageId) {
             Message::findOrFail($messageId)->delete();
         }
 
-        // $user
-        // $company
-        return view('admin.message.show', compact(['contactUsersId', 'messages', 'company', 'user']))->with(['message' => 'メッセージを削除しました', 'status' => 'info']);
+        $messages = Message::whereIn('contact_users_id', $contactUsersId)->orderBy('sent_time', 'asc')->get();
+        return redirect()->route('admin.users.messageShow', compact(['contactUsersId', 'messages', 'company', 'user']))->with(['message' => 'メッセージを削除しました', 'status' => 'info']);
     }
 }

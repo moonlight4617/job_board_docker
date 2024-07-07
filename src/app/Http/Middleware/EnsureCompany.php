@@ -19,8 +19,10 @@ final class EnsureCompany
      */
     public function handle(Request $request, Closure $next)
     {
+        if (!($request->route() instanceof \Illuminate\Routing\Route)) return $next($request);
+
         $id = $request->route()->parameter('company');
-        if (! is_null($id)) {
+        if (!is_null($id)) {
             $companyId = Companies::findOrFail($id)->id;
             if ($companyId !== Auth::id()) {
                 abort(404); // 404画面表示 }
