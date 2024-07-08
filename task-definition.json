@@ -97,7 +97,11 @@
     "taskRoleArn": "arn:aws:iam::502674413540:role/jobpair-prod-ecs-task",
     "executionRoleArn": "arn:aws:iam::502674413540:role/jobpair-prod-ecs-task-execution",
     "networkMode": "awsvpc",
-    "volumes": [],
+    "volumes": [
+        {
+            "name": "db-store"
+        }
+    ],
     "placementConstraints": [],
     "requiresCompatibilities": [
         "FARGATE"
