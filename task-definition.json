@@ -56,6 +56,41 @@
                 }
             },
             "systemControls": []
+        },
+        {
+            "name": "mysql",
+            "image": "502674413540.dkr.ecr.ap-northeast-1.amazonaws.com/jobpair-prod-mysql:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3306,
+                    "hostPort": 3306
+                }
+            ],
+            "essential": false,
+            "environment": [
+                {
+                    "name": "MYSQL_ROOT_PASSWORD",
+                    "value": "mysql"
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "mysql-data",
+                    "containerPath": "/var/lib/mysql"
+                }
+            ],
+            "volumesFrom": [],
+            "secrets": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/jobpair-prod/mysql",
+                    "awslogs-region": "ap-northeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
         }
     ],
     "family": "jobpair-prod",
