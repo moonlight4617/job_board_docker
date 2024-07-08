@@ -209,32 +209,10 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-      # - name: Deploy Amazon ECS mysql task definition
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
-      #   with:
-      #     task-definition: ${{ env.ECS_TASK_DEFINITION }}
-      #     service: ${{ env.ECS_SERVICE }}
-      #     cluster: ${{ env.ECS_CLUSTER }}
-      #     wait-for-service-stability: true
-
-  # 以下は参考コード。実際は稼働させない
-  # - name: Build, tag, and push Docker image
-  #   env:
-  #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  #     IMAGE_TAG: ${{ github.sha }}
-  #   run: |
-  #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-  #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-  # - name: Deploy to Fargate
-  #   env:
-  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     AWS_REGION: ${{ secrets.AWS_REGION }}
-  #     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  #     IMAGE_TAG: ${{ github.sha }}
-  #   run: |
-  #     aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment \
-  #     --region $AWS_REGION
+      - name: Deploy Amazon ECS mysql task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

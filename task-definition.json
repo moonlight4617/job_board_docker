@@ -67,7 +67,7 @@
                     "hostPort": 3306
                 }
             ],
-            "essential": false,
+            "essential": true,
             "environment": [
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
