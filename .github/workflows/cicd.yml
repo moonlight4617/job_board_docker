@@ -101,7 +101,7 @@ jobs:
       #   run: echo "ENV_NAME=prod" >> $GITHUB_ENV
 
       - name: Create & Start Docker Containers
-        run: docker-compose up -d --build app web
+        run: docker-compose up -d --build app web mysql
 
       - name: Cache composer
         id: cache-composer
