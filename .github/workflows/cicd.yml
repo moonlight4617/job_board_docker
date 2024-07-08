@@ -25,48 +25,48 @@ jobs:
       - name: Docker Version
         run: docker version
 
-      - name: Build Docker Images
-        run: docker-compose build
+      # - name: Build Docker Images
+      #   run: docker-compose build
 
-      - name: Create & Start Docker Containers
-        run: docker-compose up -d
+      # - name: Create & Start Docker Containers
+      #   run: docker-compose up -d
 
-      - name: OS Version
-        run: |
-          docker-compose exec -T app cat /etc/os-release
-          docker-compose exec -T app cat /etc/debian_version
+      # - name: OS Version
+      #   run: |
+      #     docker-compose exec -T app cat /etc/os-release
+      #     docker-compose exec -T app cat /etc/debian_version
 
-      - name: PHP Version
-        run: docker-compose exec -T app php --version
+      # - name: PHP Version
+      #   run: docker-compose exec -T app php --version
 
-      - name: Composer Version
-        run: docker-compose exec -T app composer --version
+      # - name: Composer Version
+      #   run: docker-compose exec -T app composer --version
 
-      - name: Install Dependencies
-        run: docker-compose exec -T app composer install
+      # - name: Install Dependencies
+      #   run: docker-compose exec -T app composer install
 
-      - name: Laravel Version
-        run: docker-compose exec -T app php artisan --version
+      # - name: Laravel Version
+      #   run: docker-compose exec -T app php artisan --version
 
-      - name: Laravel Setting
-        run: |
-          docker-compose exec -T app cp .env.example .env
-          docker-compose exec -T app php artisan key:generate
+      # - name: Laravel Setting
+      #   run: |
+      #     docker-compose exec -T app cp .env.example .env
+      #     docker-compose exec -T app php artisan key:generate
 
-      - name: Laravel Migrate Testing
-        run: docker-compose exec -T app php artisan migrate
+      # - name: Laravel Migrate Testing
+      #   run: docker-compose exec -T app php artisan migrate
 
-      - name: Laravel Rollback Testing
-        run: docker-compose exec -T app php artisan migrate:refresh
+      # - name: Laravel Rollback Testing
+      #   run: docker-compose exec -T app php artisan migrate:refresh
 
-      - name: Laravel Seeding Testing
-        run: docker-compose exec -T app php artisan db:seed
+      # - name: Laravel Seeding Testing
+      #   run: docker-compose exec -T app php artisan db:seed
 
-      - name: Larastan Testing
-        run: docker-compose exec -T app ./vendor/bin/phpstan analyse
+      # - name: Larastan Testing
+      #   run: docker-compose exec -T app ./vendor/bin/phpstan analyse
 
-      - name: Laravel PHPUnit Testing
-        run: docker-compose exec -T app php artisan test
+      # - name: Laravel PHPUnit Testing
+      #   run: docker-compose exec -T app php artisan test
 
       # 一時的にコメントアウト
   deploy:

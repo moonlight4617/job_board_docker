@@ -76,7 +76,7 @@
             ],
             "mountPoints": [
                 {
-                    "sourceVolume": "mysql-data",
+                    "sourceVolume": "db-store",
                     "containerPath": "/var/lib/mysql"
                 }
             ],
