@@ -71,7 +71,23 @@
             "environment": [
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
-                    "value": "mysql"
+                    "value": "secret"
+                },
+                {
+                    "name": "MYSQL_DATABASE",
+                    "value": "laravel"
+                },
+                {
+                "name": "MYSQL_USER",
+                "value": "phper"
+                },
+                {
+                "name": "MYSQL_PASSWORD",
+                "value": "secret"
+                },
+                {
+                "name": "TZ",
+                "value": "Asia/Tokyo"
                 }
             ],
             "mountPoints": [
