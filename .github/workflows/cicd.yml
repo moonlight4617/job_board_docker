@@ -86,6 +86,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # .envファイルのコピー
+      - name: Copy .env
+        run: cp src/.env.example src/.env
+
       # AWS認証
       - name: Configure aws credentials for pord
         uses: aws-actions/configure-aws-credentials@v1
