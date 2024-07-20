@@ -8,8 +8,6 @@ services:
       - ./src:/data
     networks:
       - app-network
-    depends_on:
-      - db
 
   web:
     build:
@@ -25,8 +23,8 @@ services:
     networks:
       - app-network
 
-  db:
-    container_name: db
+  mysql:
+    container_name: mysql
     # 明示的にcontext指定
     build: 
       context: .

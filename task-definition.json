@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "DB_HOST",
-                    "value": "db"
+                    "value": "mysql"
                 },
                 {
                     "name": "DB_PORT",
