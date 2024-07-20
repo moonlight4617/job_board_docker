@@ -100,8 +100,8 @@ jobs:
       # - name: Set env vars for prod
       #   run: echo "ENV_NAME=prod" >> $GITHUB_ENV
 
-      # - name: Create & Start Docker Containers
-      #   run: docker-compose up -d --build
+      - name: Create & Start Docker Containers
+        run: docker-compose up -d --build
 
       - name: Cache composer
         id: cache-composer
