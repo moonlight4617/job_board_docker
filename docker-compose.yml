@@ -8,6 +8,8 @@ services:
       - ./src:/data
     networks:
       - app-network
+    depends_on:
+      - db
 
   web:
     build:
