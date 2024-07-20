@@ -118,6 +118,9 @@ jobs:
         # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
         if: ${{ !steps.cache-composer.outputs.cache-hit }}
 
+      - name: Run migrations
+        run: docker-compose exec -T app php artisan migrate
+
       - name: Log in to Amazon ECR
         id: amazon-ecr-login
         uses: aws-actions/amazon-ecr-login@v1
@@ -198,7 +201,8 @@ jobs:
           image: ${{ steps.build-mysql-image.outputs.mysql-image }}
 
       - name: Deploy Amazon ECS nginx task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        # uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           service: ${{ env.ECS_SERVICE }}
@@ -206,7 +210,7 @@ jobs:
           wait-for-service-stability: true
 
       - name: Deploy Amazon ECS php task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           service: ${{ env.ECS_SERVICE }}
@@ -214,7 +218,7 @@ jobs:
           wait-for-service-stability: true
 
       - name: Deploy Amazon ECS mysql task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           service: ${{ env.ECS_SERVICE }}
