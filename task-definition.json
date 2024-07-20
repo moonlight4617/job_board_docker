@@ -38,7 +38,32 @@
             "cpu": 0,
             "portMappings": [],
             "essential": true,
-            "environment": [],
+            "environment": [
+                {
+                    "name": "DB_CONNECTION",
+                    "value": "mysql"
+                },
+                {
+                    "name": "DB_HOST",
+                    "value": "db"
+                },
+                {
+                    "name": "DB_PORT",
+                    "value": "3306"
+                },
+                {
+                    "name": "DB_DATABASE",
+                    "value": "laravel"
+                },
+                {
+                    "name": "DB_USERNAME",
+                    "value": "phper"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "value": "secret"
+                }
+            ],
             "mountPoints": [],
             "volumesFrom": [],
             "secrets": [
