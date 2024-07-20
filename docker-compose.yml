@@ -24,7 +24,8 @@ services:
       - app-network
 
   db:
-    # 明示的にcontext修正
+    container_name: db
+    # 明示的にcontext指定
     build: 
       context: .
       dockerfile: infra/mysql/Dockerfile

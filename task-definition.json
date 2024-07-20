@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "DB_HOST",
-                    "value": "job_board_docker-db"
+                    "value": "db"
                 },
                 {
                     "name": "DB_PORT",
