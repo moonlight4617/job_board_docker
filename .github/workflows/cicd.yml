@@ -118,8 +118,8 @@ jobs:
         # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
         # if: ${{ !steps.cache-composer.outputs.cache-hit }}
 
-      # - name: Run migrations
-      #   run: docker-compose exec -T app php artisan migrate
+      - name: Run migrations
+        run: docker-compose exec -T app php artisan migrate
 
       # # 一時的に
       # - name: Laravel Seeding Testing
