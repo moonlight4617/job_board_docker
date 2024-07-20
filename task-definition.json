@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "DB_HOST",
-                    "value": "db"
+                    "value": "job_board_docker-db"
                 },
                 {
                     "name": "DB_PORT",
@@ -103,16 +103,16 @@
                     "value": "laravel"
                 },
                 {
-                "name": "MYSQL_USER",
-                "value": "phper"
+                    "name": "MYSQL_USER",
+                    "value": "phper"
                 },
                 {
-                "name": "MYSQL_PASSWORD",
-                "value": "secret"
+                    "name": "MYSQL_PASSWORD",
+                    "value": "secret"
                 },
                 {
-                "name": "TZ",
-                "value": "Asia/Tokyo"
+                    "name": "TZ",
+                    "value": "Asia/Tokyo"
                 }
             ],
             "mountPoints": [

@@ -121,6 +121,10 @@ jobs:
       - name: Run migrations
         run: docker-compose exec -T app php artisan migrate
 
+      # 一時的に
+      - name: Laravel Seeding Testing
+        run: docker-compose exec -T app php artisan db:seed
+
       - name: Log in to Amazon ECR
         id: amazon-ecr-login
         uses: aws-actions/amazon-ecr-login@v1
