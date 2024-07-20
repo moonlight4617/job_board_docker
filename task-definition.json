@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "DB_HOST",
-                    "value": "mysql"
+                    "value": "db"
                 },
                 {
                     "name": "DB_PORT",
@@ -83,7 +83,7 @@
             "systemControls": []
         },
         {
-            "name": "mysql",
+            "name": "db",
             "image": "502674413540.dkr.ecr.ap-northeast-1.amazonaws.com/jobpair-prod-mysql:latest",
             "cpu": 0,
             "portMappings": [

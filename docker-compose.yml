@@ -23,8 +23,8 @@ services:
     networks:
       - app-network
 
-  mysql:
-    container_name: mysql
+  db:
+    container_name: db
     # 明示的にcontext指定
     build: 
       context: .

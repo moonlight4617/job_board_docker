@@ -116,7 +116,7 @@ jobs:
 
       - run: docker-compose exec -T app composer install -n --prefer-dist --no-dev
         # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
-        if: ${{ !steps.cache-composer.outputs.cache-hit }}
+        # if: ${{ !steps.cache-composer.outputs.cache-hit }}
 
       - name: Run migrations
         run: docker-compose exec -T app php artisan migrate
@@ -201,7 +201,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: mysql
+          container-name: db
           image: ${{ steps.build-mysql-image.outputs.mysql-image }}
 
       - name: Deploy Amazon ECS nginx task definition
