@@ -118,12 +118,14 @@ jobs:
         # steps.{指定したいステップのid}.outputs.{outputの名前}で指定したいステップのoutputにアクセスできる
         # if: ${{ !steps.cache-composer.outputs.cache-hit }}
 
-      # - name: Run migrations
-      #   run: docker-compose exec -T app php artisan migrate
+      - name: Run migrations
+        run: docker-compose exec -T app php artisan migrate
 
-      # # 一時的に
-      # - name: Laravel Seeding Testing
-      #   run: docker-compose exec -T app php artisan db:seed
+      # 今回はあくまで試しなので、毎回migrate:refreshさせる
+      - name: Laravel Rollback Testing
+        run: docker-compose exec -T app php artisan migrate:refresh
+      - name: Laravel Seeding Testing
+        run: docker-compose exec -T app php artisan db:seed
 
       - name: Log in to Amazon ECR
         id: amazon-ecr-login
