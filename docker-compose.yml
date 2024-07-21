@@ -9,7 +9,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - mysql
+      - db
 
   web:
     build:
