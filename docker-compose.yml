@@ -6,6 +6,10 @@ services:
       dockerfile: infra/php/Dockerfile
     volumes:
       - ./src:/data
+    networks:
+      - app-network
+    depends_on:
+      - db
 
   web:
     build:
@@ -18,11 +22,25 @@ services:
       - ./src:/data
       - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
     working_dir: /data
+    networks:
+      - app-network
+
   db:
-    build: ./infra/mysql
+    container_name: db
+    # 明示的にcontext指定
+    build: 
+      context: .
+      dockerfile: infra/mysql/Dockerfile
     volumes:
       - db-store:/var/lib/mysql
+    networks:
+      - app-network
+    ports:
+      - 3306:3306
+
 
 volumes:
   db-store:
-  
+
+networks:
+  app-network:
